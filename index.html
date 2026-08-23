@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Counter & Case Converter / 文字数カウント&大文字小文字変換</title>
+<meta name="description" content="文字数・単語数・読了目安時間を表示。大文字/小文字/タイトルケースへの変換もその場でできます。">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4214020669195548"
+     crossorigin="anonymous"></script>
+<style>
+  :root {
+    --bg: #101215; --card: #191c21; --text: #eef1f4; --sub: #8d95a3;
+    --accent: #7dd3fc; --accent2: #fbbf6d; --border: #262b33;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: "Hiragino Kaku Gothic ProN", "Segoe UI", Arial, sans-serif;
+    background: var(--bg); color: var(--text); padding: 16px;
+  }
+  .wrap { max-width: 520px; margin: 0 auto; }
+  .top-row { display: flex; justify-content: flex-end; margin-bottom: 4px; }
+  .lang-btn { background: none; border: 1px solid var(--border); color: var(--sub); border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; }
+  h1 { font-size: 21px; text-align: center; margin: 4px 0 4px; }
+  .lead { text-align: center; color: var(--sub); font-size: 13px; margin-bottom: 18px; line-height: 1.6; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+  textarea {
+    width: 100%; min-height: 160px; padding: 12px; font-size: 15px; border: 1px solid var(--border);
+    border-radius: 10px; background: #0d0f12; color: var(--text); resize: vertical; font-family: inherit;
+  }
+  .stats-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .stats-grid .stat { flex: 1 1 40%; background: #0d0f12; border-radius: 10px; padding: 10px; text-align: center; }
+  .stats-grid .num { font-size: 20px; font-weight: bold; color: var(--accent); }
+  .stats-grid .label { font-size: 11px; color: var(--sub); margin-top: 2px; }
+  .btn-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .btn-grid button {
+    flex: 1 1 45%; padding: 10px; border: 1px solid var(--border); border-radius: 8px;
+    background: none; color: var(--text); font-size: 13px; cursor: pointer;
+  }
+  .copy-btn { width: 100%; padding: 11px; border: 1px solid var(--border); border-radius: 10px; font-size: 13.5px; cursor: pointer; background: none; color: var(--text); margin-top: 10px; }
+  .footer-links { text-align: center; font-size: 12px; color: var(--sub); margin-top: 4px; line-height: 1.8; }
+  .footer-links a { color: var(--accent2); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-row"><button class="lang-btn" id="langBtn">EN</button></div>
+  <h1 id="title">📝 文字数カウント&ケース変換</h1>
+  <p class="lead" id="lead">文字数・単語数・読了目安時間を表示。大文字/小文字変換もその場でできます。</p>
+
+  <div class="card">
+    <textarea id="textInput" placeholder=""></textarea>
+    <div class="stats-grid">
+      <div class="stat"><div class="num" id="charsWithSpaces">0</div><div class="label" id="charsWithSpacesLabel"></div></div>
+      <div class="stat"><div class="num" id="charsNoSpaces">0</div><div class="label" id="charsNoSpacesLabel"></div></div>
+      <div class="stat"><div class="num" id="wordCount">0</div><div class="label" id="wordCountLabel"></div></div>
+      <div class="stat"><div class="num" id="readingTime">0</div><div class="label" id="readingTimeLabel"></div></div>
+    </div>
+    <div class="btn-grid">
+      <button id="btnUpper"></button>
+      <button id="btnLower"></button>
+      <button id="btnTitle"></button>
+      <button id="btnSentence"></button>
+    </div>
+    <button class="copy-btn" id="copyBtn"></button>
+  </div>
+
+  <p class="footer-links" id="footerLinks"></p>
+</div>
+
+<script>
+  const I18N = {
+    ja: {
+      title: '📝 文字数カウント&ケース変換',
+      lead: '文字数・単語数・読了目安時間を表示。大文字/小文字変換もその場でできます。',
+      placeholder: 'ここに文章を入力または貼り付けてください...',
+      charsWithSpacesLabel: '文字数(空白込み)',
+      charsNoSpacesLabel: '文字数(空白なし)',
+      wordCountLabel: '単語数(スペース区切り)',
+      readingTimeLabel: '読了目安(分)',
+      btnUpper: 'UPPERCASE', btnLower: 'lowercase', btnTitle: 'Title Case', btnSentence: 'Sentence case',
+      copyBtn: '結果をコピー',
+      copied: 'コピーしました!',
+      footerLinks: '他のツールも作っています → <a href="https://naginata-work.github.io/password-gen/" target="_blank" rel="noopener">パスワード生成</a> / <a href="https://naginata-work.github.io/cook-convert/" target="_blank" rel="noopener">料理の単位換算</a>'
+    },
+    en: {
+      title: '📝 Text Counter & Case Converter',
+      lead: 'See character count, word count, and estimated reading time. Convert case instantly.',
+      placeholder: 'Type or paste your text here...',
+      charsWithSpacesLabel: 'Characters (with spaces)',
+      charsNoSpacesLabel: 'Characters (no spaces)',
+      wordCountLabel: 'Words (space-separated)',
+      readingTimeLabel: 'Reading time (min)',
+      btnUpper: 'UPPERCASE', btnLower: 'lowercase', btnTitle: 'Title Case', btnSentence: 'Sentence case',
+      copyBtn: 'Copy result',
+      copied: 'Copied!',
+      footerLinks: 'Also made these → <a href="https://naginata-work.github.io/password-gen/" target="_blank" rel="noopener">Password Generator</a> / <a href="https://naginata-work.github.io/cook-convert/" target="_blank" rel="noopener">Cooking Unit Converter</a>'
+    }
+  };
+
+  function loadLang() { try { return localStorage.getItem('textToolsLang'); } catch (e) { return null; } }
+  function saveLang(l) { try { localStorage.setItem('textToolsLang', l); } catch (e) {} }
+  let lang = loadLang() === 'en' ? 'en' : 'ja';
+  function t() { return I18N[lang]; }
+
+  const textInput = document.getElementById('textInput');
+
+  function updateStats() {
+    const text = textInput.value;
+    const withSpaces = text.length;
+    const noSpaces = text.replace(/\s/g, '').length;
+    const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    const readingMin = Math.max(text.length === 0 ? 0 : 1, Math.ceil(noSpaces / 500));
+    document.getElementById('charsWithSpaces').textContent = withSpaces.toLocaleString();
+    document.getElementById('charsNoSpaces').textContent = noSpaces.toLocaleString();
+    document.getElementById('wordCount').textContent = words.toLocaleString();
+    document.getElementById('readingTime').textContent = readingMin.toLocaleString();
+  }
+
+  textInput.addEventListener('input', updateStats);
+
+  function toTitleCase(str) {
+    return str.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  }
+  function toSentenceCase(str) {
+    const lower = str.toLowerCase();
+    return lower.replace(/(^\s*\w|[.!?]\s+\w)/g, c => c.toUpperCase());
+  }
+
+  document.getElementById('btnUpper').addEventListener('click', () => { textInput.value = textInput.value.toUpperCase(); updateStats(); });
+  document.getElementById('btnLower').addEventListener('click', () => { textInput.value = textInput.value.toLowerCase(); updateStats(); });
+  document.getElementById('btnTitle').addEventListener('click', () => { textInput.value = toTitleCase(textInput.value); updateStats(); });
+  document.getElementById('btnSentence').addEventListener('click', () => { textInput.value = toSentenceCase(textInput.value); updateStats(); });
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(textInput.value);
+      const btn = document.getElementById('copyBtn');
+      const original = btn.textContent;
+      btn.textContent = t().copied;
+      setTimeout(() => { btn.textContent = original; }, 1500);
+    } catch {
+      alert(textInput.value);
+    }
+  });
+
+  function renderStaticText() {
+    document.getElementById('title').textContent = t().title;
+    document.getElementById('lead').textContent = t().lead;
+    textInput.placeholder = t().placeholder;
+    document.getElementById('charsWithSpacesLabel').textContent = t().charsWithSpacesLabel;
+    document.getElementById('charsNoSpacesLabel').textContent = t().charsNoSpacesLabel;
+    document.getElementById('wordCountLabel').textContent = t().wordCountLabel;
+    document.getElementById('readingTimeLabel').textContent = t().readingTimeLabel;
+    document.getElementById('btnUpper').textContent = t().btnUpper;
+    document.getElementById('btnLower').textContent = t().btnLower;
+    document.getElementById('btnTitle').textContent = t().btnTitle;
+    document.getElementById('btnSentence').textContent = t().btnSentence;
+    document.getElementById('copyBtn').textContent = t().copyBtn;
+    document.getElementById('footerLinks').innerHTML = t().footerLinks;
+  }
+
+  document.getElementById('langBtn').addEventListener('click', () => {
+    lang = lang === 'ja' ? 'en' : 'ja';
+    saveLang(lang);
+    document.getElementById('langBtn').textContent = lang === 'ja' ? 'EN' : 'JA';
+    renderStaticText();
+  });
+
+  document.getElementById('langBtn').textContent = lang === 'ja' ? 'EN' : 'JA';
+  renderStaticText();
+  updateStats();
+</script>
+</body>
+</html>
