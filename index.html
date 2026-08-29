@@ -65,7 +65,25 @@
     <button class="copy-btn" id="copyBtn"></button>
   </div>
 
+  <div class="card" style="font-size:13px; line-height:1.9; color:var(--sub);">
+    <h2 id="aboutTitle" style="font-size:15px; color:var(--text); margin:0 0 8px;"></h2>
+    <p id="aboutBody1" style="margin:0 0 10px;"></p>
+    <p id="aboutBody2" style="margin:0;"></p>
+  </div>
+
+  <div class="card" style="font-size:13px; line-height:1.9; color:var(--sub);">
+    <h2 id="faqTitle" style="font-size:15px; color:var(--text); margin:0 0 10px;"></h2>
+    <p id="faq1Q" style="margin:0 0 4px; color:var(--text); font-weight:bold;"></p>
+    <p id="faq1A" style="margin:0 0 12px;"></p>
+    <p id="faq2Q" style="margin:0 0 4px; color:var(--text); font-weight:bold;"></p>
+    <p id="faq2A" style="margin:0;"></p>
+  </div>
+
   <p class="footer-links" id="footerLinks"></p>
+  <p style="text-align:center; font-size:11px; color:var(--sub); margin-top:4px;">
+    <a href="https://naginata-work.github.io/" style="color:var(--sub);" id="allToolsLink"></a> ・
+    <a href="https://naginata-work.github.io/privacy.html" style="color:var(--sub);" id="privacyLink"></a>
+  </p>
 </div>
 
 <script>
@@ -81,7 +99,15 @@
       btnUpper: 'すべて大文字', btnLower: 'すべて小文字', btnTitle: '単語の先頭を大文字', btnSentence: '文の先頭を大文字',
       copyBtn: '結果をコピー',
       copied: 'コピーしました!',
-      footerLinks: '他のツールも作っています → <a href="https://naginata-work.github.io/password-gen/" target="_blank" rel="noopener">パスワード生成</a> / <a href="https://naginata-work.github.io/cook-convert/" target="_blank" rel="noopener">料理の単位換算</a>'
+      footerLinks: '他のツールも作っています → <a href="https://naginata-work.github.io/password-gen/" target="_blank" rel="noopener">パスワード生成</a> / <a href="https://naginata-work.github.io/cook-convert/" target="_blank" rel="noopener">料理の単位換算</a>',
+      aboutTitle: '使い方について',
+      aboutBody1: 'SNSの文字数制限、記事の目標文字数、レポートの規定字数など、「今何文字書いたか」を気にする場面は多くあります。Wordなどの重いソフトを開かなくても、貼り付けるだけですぐ確認できると便利です。',
+      aboutBody2: 'テキストを貼り付けると、文字数(空白込み・空白なし)・単語数・読了目安時間がリアルタイムで表示されます。下のボタンで大文字/小文字/Title Case/Sentence caseへの変換もその場でできるので、英文の体裁を整える作業にも使えます。',
+      faqTitle: 'よくある質問',
+      faq1Q: '日本語の文章でも正しく数えられる?',
+      faq1A: '文字数のカウントは日本語でも正確です。ただし「単語数」はスペース区切りで数える仕様のため、単語間にスペースを入れない日本語では実際の語数と一致しない点にご注意ください。',
+      faq2Q: '読了目安時間はどうやって計算しているの?',
+      faq2A: '空白を除いた文字数をもとに、1分あたり500文字を読むペースを目安として概算しています。実際の読書速度は文章の難易度や読み手によって変わります。',
     },
     en: {
       title: '📝 Text Counter & Case Converter',
@@ -94,7 +120,15 @@
       btnUpper: 'UPPERCASE', btnLower: 'lowercase', btnTitle: 'Title Case', btnSentence: 'Sentence case',
       copyBtn: 'Copy result',
       copied: 'Copied!',
-      footerLinks: 'Also made these → <a href="https://naginata-work.github.io/password-gen/" target="_blank" rel="noopener">Password Generator</a> / <a href="https://naginata-work.github.io/cook-convert/" target="_blank" rel="noopener">Cooking Unit Converter</a>'
+      footerLinks: 'Also made these → <a href="https://naginata-work.github.io/password-gen/" target="_blank" rel="noopener">Password Generator</a> / <a href="https://naginata-work.github.io/cook-convert/" target="_blank" rel="noopener">Cooking Unit Converter</a>',
+      aboutTitle: 'How it works',
+      aboutBody1: "Whether it's a social media character limit, a target word count for an article, or a report's required length, keeping track of how much you've written is a common small annoyance. Pasting text here beats opening a heavier word processor just to check.",
+      aboutBody2: "Paste your text and see character count (with and without spaces), word count, and an estimated reading time update instantly. The buttons below also convert your text to UPPERCASE, lowercase, Title Case, or Sentence case on the spot.",
+      faqTitle: 'FAQ',
+      faq1Q: 'Does the word count work for languages without spaces, like Japanese?',
+      faq1A: "Character counting works correctly for any language. Word count, however, is based on splitting by spaces, so it won't reflect the true word count for languages like Japanese that don't separate words with spaces.",
+      faq2Q: 'How is the reading time estimated?',
+      faq2A: "It's a rough estimate based on the character count (excluding spaces) at a pace of about 500 characters per minute. Actual reading speed varies by reader and text difficulty.",
     }
   };
 
@@ -158,6 +192,18 @@
     document.getElementById('btnSentence').textContent = t().btnSentence;
     document.getElementById('copyBtn').textContent = t().copyBtn;
     document.getElementById('footerLinks').innerHTML = t().footerLinks;
+    document.getElementById('aboutTitle').textContent = t().aboutTitle;
+    document.getElementById('aboutBody1').textContent = t().aboutBody1;
+    document.getElementById('aboutBody2').textContent = t().aboutBody2;
+    document.getElementById('faqTitle').textContent = t().faqTitle;
+    document.getElementById('faq1Q').textContent = t().faq1Q;
+    document.getElementById('faq1A').textContent = t().faq1A;
+    document.getElementById('faq2Q').textContent = t().faq2Q;
+    document.getElementById('faq2A').textContent = t().faq2A;
+    document.getElementById('allToolsLink').textContent = lang === 'ja' ? '他のツール一覧' : 'All tools';
+    document.getElementById('allToolsLink').href = 'https://naginata-work.github.io/';
+    document.getElementById('privacyLink').textContent = lang === 'ja' ? 'プライバシーポリシー' : 'Privacy policy';
+    document.getElementById('privacyLink').href = 'https://naginata-work.github.io/privacy.html';
   }
 
   document.getElementById('langBtn').addEventListener('click', () => {
